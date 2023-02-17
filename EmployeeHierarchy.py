@@ -24,38 +24,61 @@ result = cursor.fetchall()
 
 
 
+PIPE = "│"
+ELBOW = "└──"
+TEE = "├──"
+PIPE_PREFIX2 = "│   "
+PIPE_PREFIX = "│"
+SPACE_PREFIX = "    "	
 
 
 
-az='  '
-ar='└──'
-aq='│   └──'
-
-ax='├──'
-
-ad='│'
 dep=0
+h=''
 for x in result:
-    #print(x)
-    print()
 
-    if x.get('level')>dep:
+    if x.get('level')==0:
+        h=f"{SPACE_PREFIX*x.get('level')}{x.get('employee_name')}"
         
-        print(az*(x.get('level')),ax,x.get('employee_name'))
+        dep=x.get('level')
+    elif x.get('level')>dep:
+        if dep>=2:
+            
+            for i in range(1,dep):
+                
+                h=h[:len(SPACE_PREFIX)*i]+PIPE_PREFIX+h[len(SPACE_PREFIX)*i+1:]
+        
+        h=h.replace(TEE,ELBOW)
+        print(h)
+        h=f"{SPACE_PREFIX*x.get('level')}{TEE}{x.get('employee_name')}"
+        
         dep=x.get('level')
     elif x.get('level')<dep:
-        dep=dep-2
+        if dep>=2:
+          
+            
+            for i in range(1,dep-(dep-x.get('level'))+1):
+                
+                h=h[:len(SPACE_PREFIX)*i]+PIPE_PREFIX+h[len(SPACE_PREFIX)*i+1:]
+        h=h.replace(TEE,ELBOW)
+        print(h)
+        h=f"{SPACE_PREFIX*x.get('level')}{TEE}{x.get('employee_name')}"
+        dep=x.get('level')
+    elif x.get('level')==dep:
+        if dep>=2:
+            
+            for i in range(1,dep):
+                
+                h=h[:len(SPACE_PREFIX)*i]+PIPE_PREFIX+h[len(SPACE_PREFIX)*i+1:]
+        print(h)
+        h=f"{SPACE_PREFIX*x.get('level')}{TEE}{x.get('employee_name')}"
+        dep=x.get('level')
         
-        print(az*(x.get('level')),ax,x.get('employee_name'))
-        dep=x.get('level')
-    elif x.get('level')==0:
-        print(x.get('employee_name'))
-        dep=x.get('level')
     else:
-        dep=dep-1
-        print(az*(x.get('level')),ax,x.get('employee_name'))
-
-
+        pass
+h=h.replace(TEE,ELBOW)
+print(h)
+    
 
 
 
